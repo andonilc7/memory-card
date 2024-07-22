@@ -5,7 +5,7 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
-  const [imgUrls, setImgUrls] = useState([])
+  const [imgs, setImgs] = useState([])
 
   
 
@@ -14,7 +14,7 @@ function App() {
     console.log("effect running")
     async function fetchData() {
       try {
-        const response = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${import.meta.env.VITE_GIPHY_API_KEY}&q=Seinfeld&limit=3&offset=0&rating=g&lang=en&bundle=messaging_non_clips`);
+        const response = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${import.meta.env.VITE_GIPHY_API_KEY}&q=Arsenal&limit=12&offset=0&rating=g&lang=en&bundle=messaging_non_clips`);
         if (!response.ok) {
           throw new Error("Network response was not ok")
         }
@@ -22,10 +22,14 @@ function App() {
         console.log(json)
         
         if (isMounted) {
-          setImgUrls(prevImgUrls => 
-            json.data.map((item) => item.images.original.url)
+          setImgs(prevImgs => 
+            json.data.map((item) => 
+              ({
+                id: item.id,
+                url: item.images.fixed_height.url
+        }))
           );
-          //console.log(imgUrls)
+          //console.log(imgs)
         }
         
       } catch (error) {
@@ -41,13 +45,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log(imgUrls)
-  }, [imgUrls])
+    console.log(imgs)
+  }, [imgs])
 
   return (
     <>
-      {imgUrls.map(imgUrl => 
-        <img src={imgUrl}/>
+      {imgs.map(img => 
+        <img src={img.url} key={img.id}/>
       )}
       <h1>Vite + React</h1>
       <div className="card">
